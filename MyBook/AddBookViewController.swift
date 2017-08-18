@@ -50,7 +50,7 @@ class AddBookViewController: UIViewController {
                 publisher: publisherTextField.text,
                 coverImage: coverImageView.image,
                 price: optPrice,
-                description: descriptionTextField.text,
+                desc: descriptionTextField.text,
                 url: urlTextField.text)
             
             //이전화면에서 delegate라는 객체를 만들었다면 sendNewBook함수 실행

@@ -14,18 +14,33 @@ class BookListTableViewController: UITableViewController,  AddBookDelegate {
     //배열선언 및 생성
     var books:[Book] = Array()
     
-
+    //파일의 주소를 만들어주는 메소드 (이 앱이 어디에 설치되는지 볼수있지)
+    func getFilePath(withFileName fileName:String) -> String{
+        let dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory,  //어떤 디렉토리 가지고올지
+                                                          .userDomainMask,    // 여긴 그냥 고정으로 이렇게 써버려
+                                                          true)
+        let docDir = dirPath[0] as NSString
+        print(docDir)
+        
+        let filePath = docDir.appendingPathComponent(fileName)
+        
+        return filePath
+    }
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+
+ 
+        /*   //아래처럼 다 서써 불러오는거 말고, 파일로만들어서 파일을 읽어오도록
 
         let book1 = Book(title: "맥스",
                          writer: "수컷",
                          publisher: "방배동 서울고등학교 사거리",
                          coverImage: UIImage(named:"dog1")!,
                          price:707144,
-                         description: "사람잘따름,귀뒤 검은색 반점, 흰색, 진돗개",
+                         desc: "사람잘따름,귀뒤 검은색 반점, 흰색, 진돗개",
                          url: "https://github.com/jisoo1234/MyBook")
         
         let book2 = Book(title: "호이",
@@ -33,7 +48,7 @@ class BookListTableViewController: UITableViewController,  AddBookDelegate {
                          publisher: "길음동 현대아파트 3단지",
                          coverImage: UIImage(named:"dog2")!,
                          price:245187,
-                         description: "한쪽다리를 절음(수술한 흔적)",
+                         desc: "한쪽다리를 절음(수술한 흔적)",
                          url: "https://github.com/jisoo1234/MyBook")
         
         let book3 = Book(title: "동동이",
@@ -41,7 +56,7 @@ class BookListTableViewController: UITableViewController,  AddBookDelegate {
                          publisher: "군자동 어린이대공원",
                          coverImage: UIImage(named:"dog3")!,
                          price:865475,
-                         description: "등에 갈색 털이 하트모양으로 나있음, 앞니가 빠져있음",
+                         desc: "등에 갈색 털이 하트모양으로 나있음, 앞니가 빠져있음",
                          url: "https://github.com/jisoo1234/MyBook")
         
         let book4 = Book(title: "마루",
@@ -49,7 +64,7 @@ class BookListTableViewController: UITableViewController,  AddBookDelegate {
                          publisher: "송파구 올림픽공원",
                          coverImage: UIImage(named:"dog4")!,
                          price:774599,
-                         description: "앞발톱은 검은색, 뒷발톱은 흰색임",
+                         desc: "앞발톱은 검은색, 뒷발톱은 흰색임",
                          url: "https://github.com/jisoo1234/MyBook")
         
         let book5 = Book(title: "진돌이",
@@ -57,28 +72,37 @@ class BookListTableViewController: UITableViewController,  AddBookDelegate {
                          publisher: "후암동 용산고등학교 사거리",
                          coverImage: UIImage(named:"dog5")!,
                          price:214586,
-                         description: "꼬리가 귀보다 짧음, 건치미남, 치아가 많이있음",
+                         desc: "꼬리가 귀보다 짧음, 건치미남, 치아가 많이있음",
                          url: "https://github.com/jisoo1234/MyBook")
         
-        /*
-        let book6 = Book(title: "봉구",
-                         writer: nil,
-                         publisher: nil,
-                         coverImage: nil,
-                         price: nil,
-                         description: nil,
-                         url: nil)
-        */
-
         
         self.books.append(book1)
         self.books.append(book2)
         self.books.append(book3)
         self.books.append(book4)
         self.books.append(book5)
-        //self.books.append(book6)
+
+        */
         
-    }
+        // let filePath = self.getFilePath(withFileName:"books")
+        
+        // NSKeyedArchiver.archiveRootObject(self.books, toFile: filePath)
+        // print(filePath)
+        
+        let filePath = self.getFilePath(withFileName: "books")
+        
+        let fileManager = FileManager.default
+        
+        //우선 불러올 파일이 있는지 없는지 먼저 확인
+        if fileManager.fileExists(atPath: filePath){
+            if let books = NSKeyedUnarchiver.unarchiveObject(withFile: filePath) as? [Book]{
+                self.books.append(contentsOf: books)
+            }
+        }
+        
+    }  // viewDidLoad 닫기
+    
+    
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
