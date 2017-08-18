@@ -9,7 +9,7 @@
 import UIKit
 import Foundation
 
-class BookListTableViewController: UITableViewController {
+class BookListTableViewController: UITableViewController,  AddBookDelegate {
     
     //배열선언 및 생성
     var books:[Book] = Array()
@@ -60,13 +60,23 @@ class BookListTableViewController: UITableViewController {
                          description: "꼬리가 귀보다 짧음, 건치미남, 치아가 많이있음",
                          url: "https://github.com/jisoo1234/MyBook")
         
+        /*
+        let book6 = Book(title: "봉구",
+                         writer: nil,
+                         publisher: nil,
+                         coverImage: nil,
+                         price: nil,
+                         description: nil,
+                         url: nil)
+        */
+
         
         self.books.append(book1)
         self.books.append(book2)
         self.books.append(book3)
         self.books.append(book4)
         self.books.append(book5)
-        
+        //self.books.append(book6)
         
     }
 
@@ -100,16 +110,17 @@ class BookListTableViewController: UITableViewController {
             let numFormatter:NumberFormatter = NumberFormatter()
             numFormatter.numberStyle = NumberFormatter.Style.decimal
             
-            let price = book.price
-            let priceStr = numFormatter.string(from: NSNumber(integerLiteral: price))
+            if let price = book.price {
+                  let priceStr = numFormatter.string(from: NSNumber(integerLiteral: price))
+                bookCell.bookPriceLabel.text = priceStr
+            } else {
+                bookCell.bookPriceLabel.text = ""   //셀이 재사용될때 빈값으로 나오도록하기위해
+            }
             
-        
             
             
             bookCell.bookTitleLabel.text = book.title
             bookCell.bookWriterLabel.text = book.writer
-            //bookCell.bookPriceLabel.text = String(book.price)
-            bookCell.bookPriceLabel.text = priceStr
             bookCell.bookimageView.image = book.coverImage
             return bookCell
 
@@ -162,8 +173,20 @@ class BookListTableViewController: UITableViewController {
     }
     */
 
-    //앞 화면 셀에서 터치해서 디테일 화면으로 넘어오는 시점에 타는 함수임
+    //1. 앞 화면 셀에서 > 터치해서 디테일 화면으로 넘어오는 시점에 타는 함수임
+    //2. 앞 화면에서 + 터치해서 add화면으로 넘어오는 시점에 타는 함수
+    // 즉 어떤 세그를 타냐에 따라 다르기때문에 스토리보드에서 세그(화살표)선택하고 
+    // identifier에 id 할당해줘야해
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        if segue.identifier == "addvc"{
+            
+            if let addVC = segue.destination as? AddBookViewController{
+                addVC.delegate = self  // class BookListTableViewController에 AddBookDelegate 프로토콜 지정해줘야해
+            }
+            
+        
+        } else if segue.identifier == "detailvc" {
         
         let cell = sender as? UITableViewCell
         let vc = segue.destination as? BookDetailViewController
@@ -180,7 +203,16 @@ class BookListTableViewController: UITableViewController {
         //if let selCell = cell{
         //let cellIdx = self.tableView.indexPath(for: selCell)
         //print(cellIdx?.row) }//인덱스 몇번타고 디테일로 가는지 콘솔창에서 확인하기 위한용
-       
+            
+        }
+    } //prepare펑션 닫음
+    
+    // class BookListTableViewController에 AddBookDelegate 프로토콜 지정했잖아
+    // 그럼 add파일에 있는 펑션도 같이 여기에 정의해줘야해
+    
+    func sendNewBook(book: Book) {
+        self.books.append(book)
+        self.tableView.reloadData()  // add화면에 갔다가 다시 앞 화면(리스트화면)왔을때 테이블을 리로드하는거
     }
    
 }

@@ -41,7 +41,11 @@ class BookDetailViewController: UIViewController {
         self.bookWriterLabel.text = newBook.writer
         self.bookCoverImageView.image = newBook.coverImage
         self.bookPublisherLabel.text = newBook.publisher
-        self.bookPriceLabel.text = String(newBook.price)
+        
+        if let bookPrice = newBook.price {
+            self.bookPriceLabel.text = String(bookPrice)
+        } //book class에서 옵셔널 처리했는데 int를 string으로 바꿀때는 if let 으로 써야해
+        
         self.bookDescriptionTextView.text = newBook.description
     
         //title 받는거
